@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.CommentMapper">
+
+    <!--级联属性封装多表查询-->
+    <resultMap id="mymap" type="Comment">
+        <id column="commentId" property="commentId"></id>
+        <result column="content" property="content"></result>
+        <result column="dateTime" property="dateTime"></result>
+        <result column="id" property="blog.id"></result>
+        <result column="blogId" property="blog.blogId"></result>
+        <result column="blogName" property="blog.blogName"></result>
+    </resultMap>
+
+    <select id="listComment" resultMap="mymap">
+        select commentId,content,dateTime,id,b.blogId,blogName from comment c left join blog b  on c.blogId=b.blogId  where commentId like CONCAT('%',#{commentId},'%') or content like CONCAT('%',#{commentId},'%');
+    </select>
+
+    <insert id="insertComment" parameterType="Comment">
+        insert into comment values (default,#{content},#{dateTime},#{blogId});
+    </insert>
+
+    <select id="selectCommentById" parameterType="String" resultType="Comment">
+        select * from comment where commentId=#{commentId}
+    </select>
+
+    <update id="update" parameterType="Comment">
+        update comment
+        <set>
+            <if test="content!=null and content!=''">
+                content=#{content},
+            </if>
+            <if test="dateTime!=null and dateTime!=''">
+                dateTime=#{dateTime},
+            </if>
+            <if test="blogId!=null and blogId!=''">
+                blogId=#{blogId},
+            </if>
+        </set>
+        where commentId=#{commentId};
+    </update>
+
+    <delete id="delete" parameterType="String">
+        delete from comment where  commentId=#{0}
+    </delete>
+
+    <select id="selectCommentListByBlogId" parameterType="String" resultType="Comment">
+        select * from comment where blogId=#{blogId};
+    </select>
+
+    <select id="selectCommentLikeId" parameterType="Comment" resultType="Comment">
+        select * from comment where blogId=#{blogId} and
+        commentId like
+        CONCAT('%',<if test="commentId==null">''</if>
+        <if test="commentId!=null">#{commentId}</if>,'%');
+    </select>
+</mapper>

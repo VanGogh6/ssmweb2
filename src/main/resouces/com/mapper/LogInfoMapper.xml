@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.LogInfoMapper">
+
+    <resultMap id="tttmap" type="LogInfo">
+        <id column="id" property="id"></id>
+        <result column="logintime" property="logintime"></result>
+        <result column="userId" property="user.userId"></result>
+        <result column="userName" property="user.userName"></result>
+        <result column="userLevel" property="user.userLevel"></result>
+    </resultMap>
+
+    <select id="selectInfoList" resultMap="tttmap">
+        select id,logintime,u.userId,u.userName,u.userLevel from loginfo l,`user` u where u.userId=l.userId ;
+    </select>
+
+    <insert id="insertLoginfo" parameterType="Loginfo">
+        insert into loginfo(userId,logintime) values(#{userId},#{logintime})
+    </insert>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserMapper">
+
+    <select id="selectUser" parameterType="User" resultType="User">
+        select * from user
+        <where>
+            <if test="userId!=null and userId!=''">
+                and userId=#{userId}
+            </if>
+            <if test="userName!=null and userName!=''">
+                and userName=#{userName}
+            </if>
+            <if test="passWord!=null and passWord!=''">
+                and passWord=#{passWord}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="map" type="User">
+        <id column="userId" property="userId"></id>
+        <result column="userName" property="userName"></result>
+        <result column="imgUrl" property="imgUrl"></result>
+        <result column="userLevel" property="userLevel"></result>
+        <result column="id" property="blog.id"></result>
+        <result column="blogId" property="blog.blogId"></result>
+        <result column="blogName" property="blog.blogName"></result>
+    </resultMap>
+    <select id="selectUserAll" resultMap="map">
+        select userId,userName,imgUrl,userLevel,id,b.blogId,b.blogName from `user` u left join blog b  on u.blogId=b.blogId;
+    </select>
+
+    <insert id="insertUser" parameterType="User">
+        insert into `user`(userId,userName,passWord,imgUrl,userLevel,blogId,opt) values(#{userId},#{userName},#{passWord},#{imgUrl},#{userLevel},#{blogId},'')
+    </insert>
+
+    <delete id="delete" parameterType="String">
+        delete from  `user` where userId=#{userId}
+    </delete>
+    
+    <update id="updateImg" parameterType="User">
+        update `user` set imgUrl=#{imgUrl} where userId=#{userId};
+    </update>
+
+    <update id="updatePassWord" parameterType="User">
+        update user set passWord=#{passWord} where userId=#{userId}
+    </update>
+</mapper>
